@@ -5,14 +5,37 @@ const client = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET,
 });
 
-exports.handler = async (event, context) => {
-  data = JSON.parse(event.body);
+const authStringContainsCorrectPassword = (authString) => {
+  if (
+    typeof authString === "undefined" ||
+    typeof authString.replace !== "function"
+  ) {
+    return false;
+  }
 
-  if (event.headers.authorization !== process.env.API_PASSWORD) {
+  const cleanAuthString = authString.replace("Basic", "").trim();
+  const parsedAuthString = Buffer.from(cleanAuthString, "base64").toString();
+  const splitAuthString = parsedAuthString.split(":");
+  const passwordFromAuthString = splitAuthString[splitAuthString.length - 1];
+
+  if (passwordFromAuthString !== process.env.API_PASSWORD) {
+    return false;
+  }
+
+  return true;
+};
+
+exports.handler = async (event, context) => {
+  // Before starting,
+  // let's check to see if we're authed with the right password
+  const authString = event.headers.authorization;
+  if (!authStringContainsCorrectPassword(authString)) {
     return {
       statusCode: 403,
     };
   }
+
+  const data = JSON.parse(event.body);
 
   // We convert the provided timestamp
   // into a FaunaDB Time() object
