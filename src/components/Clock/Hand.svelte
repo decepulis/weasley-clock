@@ -33,7 +33,6 @@
   $: activeRegionAngle.set(activeRegion?.angleDeg ?? lostRegion?.angleDeg);
 
   // Okay now let's do the API thing
-  let currentFrequency = "LOW";
   let timeout: number;
   let currentDocumentId: string;
   let requestsWithSameDocumentId = 0;
@@ -43,6 +42,7 @@
 
   onMount(() => {
     const getLocationForTrackerId = async () => {
+      let newActiveRegion: string;
       try {
         const response = await fetch(
           `/.netlify/functions/location?tid=${trackerId}`,
@@ -70,7 +70,7 @@
           const data = document?.data;
           if (typeof data === "undefined") {
             // Huh. Nothing in this data.
-            activeRegionNames.updateRegionForTrackerId(trackerId, "Lost");
+            newActiveRegion = "Lost";
           } else {
             // Yay there's data in the document!
             // Now what?
@@ -78,13 +78,10 @@
             const region = data.inregions?.[0];
             if (typeof region !== "undefined") {
               // if so, simple! We just point the hand at that region
-              activeRegionNames.updateRegionForTrackerId(trackerId, region);
+              newActiveRegion = region;
             } else {
               // otherwise, we assume we're in transit...
-              activeRegionNames.updateRegionForTrackerId(
-                trackerId,
-                "In Transit"
-              );
+              newActiveRegion = "In Transit";
               // And we set a new latitude and longitude to calculate ETA!
               etaLatitude = data.lat;
               etaLongitude = data.lon;
@@ -103,10 +100,13 @@
         }
         activeRegionNames.updateRegionForTrackerId(trackerId, "Lost");
       }
+      if (typeof newActiveRegion !== "undefined") {
+        activeRegionNames.updateRegionForTrackerId(trackerId, newActiveRegion);
+      }
       // Now that we got the data and set the data,
       // let's schedule our next data fetch!
-      currentFrequency = getFrequencyForRegion(
-        activeRegionName,
+      const currentFrequency = getFrequencyForRegion(
+        newActiveRegion ?? activeRegionName,
         $activeRegionNames,
         requestsWithSameDocumentId
       );
