@@ -36,7 +36,8 @@
   let currentFrequency = "LOW";
   let timeout: number;
   let currentDocumentId: string;
-  let requestsWithSameLocation = 0;
+  let requestsWithSameDocumentId = 0;
+
   let etaLatitude: number;
   let etaLongitude: number;
 
@@ -64,7 +65,7 @@
           // Hey look a fresh document!
           // Let's do something with it.
           currentDocumentId = responseDocumentId;
-          requestsWithSameLocation = 0;
+          requestsWithSameDocumentId = 0;
           // Is there any data in the document?
           const data = document?.data;
           if (typeof data === "undefined") {
@@ -90,11 +91,12 @@
             }
           }
         } else {
-          requestsWithSameLocation += 1;
+          // If this number gets too high,
+          // we reduce update frequency
+          requestsWithSameDocumentId += 1;
         }
       } catch (error) {
-        const errorText = await error.text();
-        console.error(errorText);
+        console.error(error);
         if (error.status === 403) {
           $password = undefined;
           return;
@@ -106,7 +108,7 @@
       currentFrequency = getFrequencyForRegion(
         activeRegionName,
         $activeRegionNames,
-        requestsWithSameLocation
+        requestsWithSameDocumentId
       );
       timeout = setTimeout(
         () => getLocationForTrackerId(),

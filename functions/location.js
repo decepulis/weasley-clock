@@ -1,4 +1,3 @@
-// GetLatestLocationByTid
 const faunadb = require("faunadb");
 
 const {
@@ -50,7 +49,6 @@ const GetLatestLocationByTid = (tid) =>
     ),
     Lambda(["trackTime", "trackRef"], Get(Var("trackRef")))
   );
-
 exports.handler = async (event, context) => {
   // Before starting,
   // let's check to see if we're authed with the right password
@@ -75,6 +73,10 @@ exports.handler = async (event, context) => {
 
   try {
     response = await client.query(GetLatestLocationByTid(tid));
+    return {
+      statusCode: 200,
+      body: JSON.stringify(response),
+    };
   } catch (error) {
     console.error(error);
     return {
