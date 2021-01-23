@@ -5,7 +5,9 @@
   import { password, activeRegionNames } from "../../stores";
 
   import type { RegionType } from "../../types/region.type";
-  import { getFrequencyForRegion, frequencyMs } from "./Hand.module";
+  import { getFrequencyForRegion, frequencyMs } from "./utils";
+
+  import Eta from "./Eta.svelte";
 
   export let trackerId: string;
   export let regions: RegionType[];
@@ -35,6 +37,9 @@
   let timeout: number;
   let currentDocumentId: string;
   let requestsWithSameLocation = 0;
+  let etaLatitude: number;
+  let etaLongitude: number;
+
   onMount(() => {
     const getLocationForTrackerId = async () => {
       try {
@@ -79,6 +84,9 @@
                 trackerId,
                 "In Transit"
               );
+              // And we set a new latitude and longitude to calculate ETA!
+              etaLatitude = data.lat;
+              etaLongitude = data.lon;
             }
           }
         } else {
@@ -127,9 +135,18 @@
     x={center}
     y={endOfTail}
     text-anchor="middle"
-    alignment-baseline="middle">
+    alignment-baseline="central">
     {trackerId}
   </text>
+  {#if activeRegionName === "In Transit"}
+    <Eta
+      latitude={etaLatitude}
+      longitude={etaLongitude}
+      {offset}
+      {viewBox}
+      {trackerId}
+    />
+  {/if}
 </g>
 
 <style>
