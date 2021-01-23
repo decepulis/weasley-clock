@@ -1,6 +1,17 @@
+// GetLatestLocationByTid
 const faunadb = require("faunadb");
 
-const { Create, Collection, Epoch } = faunadb.query;
+const {
+  Map: FaunaMap,
+  Paginate,
+  Join,
+  Intersection,
+  Match,
+  Index,
+  Lambda,
+  Get,
+  Var,
+} = faunadb.query;
 const client = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET,
 });
@@ -25,6 +36,21 @@ const authStringContainsCorrectPassword = (authString) => {
   return true;
 };
 
+const GetLatestLocationByTid = (tid) =>
+  FaunaMap(
+    Paginate(
+      Join(
+        Intersection(
+          Match(Index("all_tracks_by_type"), "location"),
+          Match(Index("all_tracks_by_tid"), tid)
+        ),
+        Index("track_sort_by_timestamp_desc")
+      ),
+      { size: 1 }
+    ),
+    Lambda(["trackTime", "trackRef"], Get(Var("trackRef")))
+  );
+
 exports.handler = async (event, context) => {
   // Before starting,
   // let's check to see if we're authed with the right password
@@ -32,24 +58,23 @@ exports.handler = async (event, context) => {
   if (!authStringContainsCorrectPassword(authString)) {
     return {
       statusCode: 403,
+      body: JSON.stringify("Incorrect Password"),
     };
   }
 
-  const data = JSON.parse(event.body);
-
-  // We convert the provided timestamp
-  // into a FaunaDB Time() object
-  if (typeof data.tst === "number") {
-    data.tst = Epoch(data.tst, "seconds");
-  }
-
-  // Then, we post
-  try {
-    response = await client.query(Create(Collection("owntracks"), { data }));
+  // Alright now let's do a request!
+  const { tid } = event.queryStringParameters;
+  if (typeof tid === "undefined") {
     return {
-      statusCode: 200,
-      body: JSON.stringify(response),
+      statusCode: 400,
+      body: JSON.stringify({
+        message: 'Query String Parameter "tid" is required',
+      }),
     };
+  }
+
+  try {
+    response = await client.query(GetLatestLocationByTid(tid));
   } catch (error) {
     console.error(error);
     return {

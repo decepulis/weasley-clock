@@ -1,19 +1,27 @@
 <script lang="ts">
   import Clock from "./components/Clock/index.svelte";
+  import PasswordPrompt from "./components/PasswordPrompt.svelte";
+
+  import { password } from "./stores";
 </script>
 
-<Clock
-  trackerIds={["dc", "kc"]}
-  regionNames={[
-    "Home",
-    "In Transit",
-    "Lost",
-    "Work",
-    "Mortal Peril",
-    "Barn",
-    "Holidays",
-  ]}
-/>
+{#if !!$password}
+  <Clock
+    trackerIds={["dc", "kc"]}
+    regionNames={[
+      "Home",
+      "In Transit",
+      "Lost",
+      "Work",
+      "Mortal Peril",
+      "Gym",
+      "Barn",
+      "Holidays",
+    ]}
+  />
+{:else}
+  <PasswordPrompt />
+{/if}
 
 <style>
   :global(html) {
