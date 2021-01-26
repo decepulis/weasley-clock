@@ -21,9 +21,8 @@ const authStringContainsCorrectPassword = (authString) => {
   return true;
 };
 
-const client = new Client({});
-
 exports.handler = async (event, context) => {
+  const client = new Client({});
   // Before starting,
   // let's check to see if we're authed with the right password
   const authString = event.headers.authorization;
