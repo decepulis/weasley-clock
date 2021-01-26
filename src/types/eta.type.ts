@@ -1,4 +1,4 @@
 export type EtaType = {
-  text: string;
-  value?: number;
+  text?: string;
+  value: number;
 };

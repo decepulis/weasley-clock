@@ -6,6 +6,7 @@
   import { getEtaForCoordinates } from "./utils";
 
   import type { EtaType } from "../../types/eta.type";
+  import CountdownTimer from "../CountdownTimer.svelte";
 
   export let latitude: number;
   export let longitude: number;
@@ -21,7 +22,8 @@
     dc: "Darius",
   };
   $: name = idToName[trackerId];
-  let eta: EtaType = { text: "..." };
+
+  let eta: EtaType;
   $: {
     try {
       getEtaForCoordinates(latitude, longitude, $password).then((response) => {
@@ -51,7 +53,7 @@
       xlink:href={`#${latitude},${longitude}`}
       text-anchor="middle"
       startOffset="25%">
-      {name} will be home in {eta.text}
+      {name} will be home <CountdownTimer seconds={eta?.value} />
     </textPath>
   </text>
 </g>

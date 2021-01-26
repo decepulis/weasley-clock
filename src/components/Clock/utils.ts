@@ -49,3 +49,27 @@ export const getEtaForCoordinates = async (
   const parsedResponse = await response.json();
   return parsedResponse.routes?.[0]?.legs?.[0]?.duration;
 };
+
+export const getSecondsElapsedSince = (since: Date): number => {
+  const now = new Date();
+  const msElapsed = now.getTime() - since.getTime();
+  return msElapsed / 1000;
+};
+
+export const formatSeconds = (seconds: number): string => {
+  const date = new Date(0);
+  date.setSeconds(seconds);
+  
+  const timeString = date.toISOString(); // yyyy-mm-ddThh:mm:ss...
+
+  if (seconds >= 3600) {
+    // hh:mm:ss
+    return timeString.substr(11, 8)
+  } else if (seconds >= 60) {
+    // mm:ss
+    return timeString.substr(14, 5)
+  } else {
+    // ss
+    return timeString.substr(17:2)
+  }
+}

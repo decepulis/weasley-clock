@@ -26,6 +26,7 @@
   const endOfTail = center + offsetLength + tailLength;
 
   $: activeRegionName = $activeRegionNames[trackerId];
+  // TODO: chime when active region changes
   let activeRegionAngle = spring(0, { stiffness: 0.05, damping: 0.2 });
 
   $: activeRegion = regions.find((region) => region.name === activeRegionName);
@@ -140,7 +141,7 @@
     alignment-baseline="central">
     {trackerId}
   </text>
-  {#if activeRegionName === "In Transit"}
+  {#if activeRegionName === "In Transit" && requestsWithSameDocumentId <= 3}
     <Eta
       latitude={etaLatitude}
       longitude={etaLongitude}
