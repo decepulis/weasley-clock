@@ -8,6 +8,7 @@
   import { getFrequencyForRegion, frequencyMs } from "./utils";
 
   import Eta from "./Eta.svelte";
+  import Chime from "./Chime.svelte";
 
   export let trackerId: string;
   export let regions: RegionType[];
@@ -150,6 +151,7 @@
       {trackerId}
     />
   {/if}
+  <Chime {activeRegionName} />
 </g>
 
 <style>
