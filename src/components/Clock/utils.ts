@@ -59,17 +59,17 @@ export const getSecondsElapsedSince = (since: Date): number => {
 export const formatSeconds = (seconds: number): string => {
   const date = new Date(0);
   date.setSeconds(seconds);
-  
+
   const timeString = date.toISOString(); // yyyy-mm-ddThh:mm:ss...
 
   if (seconds >= 3600) {
     // hh:mm:ss
-    return timeString.substr(11, 8)
+    return timeString.substr(11, 8);
   } else if (seconds >= 60) {
     // mm:ss
-    return timeString.substr(14, 5)
+    return timeString.substr(14, 5);
   } else {
     // ss
-    return timeString.substr(17:2)
+    return timeString.substr(17, 2);
   }
-}
+};
