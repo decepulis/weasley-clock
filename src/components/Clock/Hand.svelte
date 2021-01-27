@@ -36,8 +36,8 @@
 
   // Okay now let's do the API thing
   let timeout: number;
-  let currentDocumentId: string;
-  let requestsWithSameDocumentId = 0;
+  let currentResponseString: string;
+  let requestsWithSameResponse = 0;
 
   let etaLatitude: number;
   let etaLongitude: number;
@@ -61,38 +61,32 @@
         // Yay we have data!
         // Here's what we're going to do with it.
         // First, we determine if the location is new.
-        const document = parsedResponse?.data?.[0];
-        const responseDocumentId = document?.["ref"]?.["@ref"]?.["id"];
-        if (responseDocumentId !== currentDocumentId) {
-          // Hey look a fresh document!
+        const newResponseString = JSON.stringify(parsedResponse);
+        if (newResponseString !== currentResponseString) {
+          // Hey look fresh data!
           // Let's do something with it.
-          currentDocumentId = responseDocumentId;
-          requestsWithSameDocumentId = 0;
-          // Is there any data in the document?
-          const data = document?.data;
-          if (typeof data === "undefined") {
-            // Huh. Nothing in this data.
-            newActiveRegion = "Lost";
+          currentResponseString = newResponseString;
+          requestsWithSameResponse = 0;
+          // Now what?
+          // First, we check to see if owntracks has labeled the data with a region.
+          let region = parsedResponse.inregions;
+          if (Array.isArray(region)) {
+            region = region[0];
+          }
+          if (typeof region !== "undefined") {
+            // if so, simple! We just point the hand at that region
+            newActiveRegion = region;
           } else {
-            // Yay there's data in the document!
-            // Now what?
-            // First, we check to see if owntracks has labeled the data with a region.
-            const region = data.inregions?.[0];
-            if (typeof region !== "undefined") {
-              // if so, simple! We just point the hand at that region
-              newActiveRegion = region;
-            } else {
-              // otherwise, we assume we're in transit...
-              newActiveRegion = "In Transit";
-              // And we set a new latitude and longitude to calculate ETA!
-              etaLatitude = data.lat;
-              etaLongitude = data.lon;
-            }
+            // otherwise, we assume we're in transit...
+            newActiveRegion = "In Transit";
+            // And we set a new latitude and longitude to calculate ETA!
+            etaLatitude = parsedResponse.lat;
+            etaLongitude = parsedResponse.lon;
           }
         } else {
           // If this number gets too high,
           // we reduce update frequency
-          requestsWithSameDocumentId += 1;
+          requestsWithSameResponse += 1;
         }
       } catch (error) {
         console.error(error);
@@ -110,7 +104,7 @@
       const currentFrequency = getFrequencyForRegion(
         newActiveRegion ?? activeRegionName,
         $activeRegionNames,
-        requestsWithSameDocumentId
+        requestsWithSameResponse
       );
       timeout = setTimeout(
         () => getLocationForTrackerId(),
@@ -139,10 +133,11 @@
     x={center}
     y={endOfTail}
     text-anchor="middle"
-    alignment-baseline="central">
+    alignment-baseline="central"
+  >
     {trackerId}
   </text>
-  {#if activeRegionName === "In Transit" && requestsWithSameDocumentId <= 3}
+  {#if activeRegionName === "In Transit" && requestsWithSameResponse <= 3}
     <Eta
       latitude={etaLatitude}
       longitude={etaLongitude}
