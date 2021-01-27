@@ -1,9 +1,6 @@
 const faunadb = require("faunadb");
 
 const { Create, Collection, Epoch } = faunadb.query;
-const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET,
-});
 
 const authStringContainsCorrectPassword = (authString) => {
   if (
@@ -26,6 +23,10 @@ const authStringContainsCorrectPassword = (authString) => {
 };
 
 exports.handler = async (event, context) => {
+  const client = new faunadb.Client({
+    secret: process.env.FAUNADB_SECRET,
+  });
+
   // Before starting,
   // let's check to see if we're authed with the right password
   const authString = event.headers.authorization;
