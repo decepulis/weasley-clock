@@ -73,7 +73,7 @@
           if (Array.isArray(region)) {
             region = region[0];
           }
-          if (typeof region !== "undefined") {
+          if (!!region) {
             // if so, simple! We just point the hand at that region
             newActiveRegion = region;
           } else {
