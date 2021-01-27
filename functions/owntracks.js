@@ -38,6 +38,14 @@ exports.handler = async (event, context) => {
 
   const data = JSON.parse(event.body);
 
+  // We're only storing locations here,
+  // so we ignore everything else
+  if (data._type !== "location") {
+    return {
+      statusCode: 200,
+    };
+  }
+
   // We convert the provided timestamp
   // into a FaunaDB Time() object
   if (typeof data.tst === "number") {

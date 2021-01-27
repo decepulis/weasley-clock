@@ -1,16 +1,6 @@
 const faunadb = require("faunadb");
 
-const {
-  Map: FaunaMap,
-  Paginate,
-  Join,
-  Intersection,
-  Match,
-  Index,
-  Lambda,
-  Get,
-  Var,
-} = faunadb.query;
+const { Paginate, Match, Index, ToString } = faunadb.query;
 
 const authStringContainsCorrectPassword = (authString) => {
   if (
@@ -32,20 +22,38 @@ const authStringContainsCorrectPassword = (authString) => {
   return true;
 };
 
+const locationKeys = [
+  "tst",
+  "acc",
+  "alt",
+  "batt",
+  "bs",
+  "cog",
+  "lat",
+  "lon",
+  "rad",
+  "t",
+  "tid",
+  "vac",
+  "vel",
+  "p",
+  "conn",
+  "inregions",
+  "SSID",
+  "BSSID",
+];
+const parseFaunaLocationValues = (locationValues) => {
+  const location = {};
+  locationValues.forEach((locationValue, index) => {
+    const locationKey = locationKeys[index];
+    location[locationKey] = locationValue;
+  });
+  return location;
+};
+
 const GetLatestLocationByTid = (tid) =>
-  FaunaMap(
-    Paginate(
-      Join(
-        Intersection(
-          Match(Index("all_tracks_by_type"), "location"),
-          Match(Index("all_tracks_by_tid"), tid)
-        ),
-        Index("track_sort_by_timestamp_desc")
-      ),
-      { size: 1 }
-    ),
-    Lambda(["trackTime", "trackRef"], Get(Var("trackRef")))
-  );
+  Paginate(Match(Index("locations_by_tid"), tid), { size: 1 });
+
 exports.handler = async (event, context) => {
   const client = new faunadb.Client({
     secret: process.env.FAUNADB_SECRET,
@@ -74,9 +82,11 @@ exports.handler = async (event, context) => {
 
   try {
     response = await client.query(GetLatestLocationByTid(tid));
+    // this will throw an error to our catch if there is no data in the response
+    const location = parseFaunaLocationValues(response.data[0]);
     return {
       statusCode: 200,
-      body: JSON.stringify(response),
+      body: JSON.stringify(location),
     };
   } catch (error) {
     console.error(error);
