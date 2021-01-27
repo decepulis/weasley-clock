@@ -16,7 +16,8 @@
   const interval = setInterval(() => {
     const isValidDateObject =
       typeof displayValueSetTime?.getTime === "function";
-    if (isValidDateObject) {
+    const isDefinedValue = typeof displayValue !== "undefined";
+    if (isValidDateObject && isDefinedValue) {
       const secondsElapsed = getSecondsElapsedSince(displayValueSetTime);
       displayValue = seconds - secondsElapsed;
     }
@@ -26,7 +27,7 @@
   // And from that updated value, we calculate a string
   let displayStr = "...";
   $: {
-    if (typeof displayValue === "number") {
+    if (typeof displayValue === "number" && !isNaN(displayValue)) {
       if (displayValue <= 120) {
         displayStr = "soon!";
       } else {
