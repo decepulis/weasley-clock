@@ -29,10 +29,10 @@
   $: {
     if (typeof displayValue === "number" && !isNaN(displayValue)) {
       if (displayValue <= 120) {
-        displayStr = "soon!";
+        displayStr = "nearby!";
       } else {
         const displayTimeStr = formatSeconds(displayValue);
-        displayStr = `in ${displayTimeStr}.`;
+        displayStr = `${displayTimeStr} away.`;
       }
     }
   }

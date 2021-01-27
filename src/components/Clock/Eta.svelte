@@ -52,8 +52,9 @@
     <textPath
       xlink:href={`#${latitude},${longitude}`}
       text-anchor="middle"
-      startOffset="25%">
-      {name} will be home <CountdownTimer seconds={eta?.value} />
+      startOffset="25%"
+    >
+      {name} is <CountdownTimer seconds={eta?.value} />
     </textPath>
   </text>
 </g>
