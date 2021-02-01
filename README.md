@@ -45,12 +45,13 @@ Taking cues from a [MagPi article](https://magpi.raspberrypi.org/articles/build-
 - [A 2.5A Micro-USB Switched Power Supply](https://www.amazon.com/CanaKit-Raspberry-Supply-Adapter-Listed/dp/B00MARDJZ4/)
 - [A short micro-usb cable to power the display](https://www.amazon.com/gp/product/B017NJW2T2/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
 - [A short HDMI cable to connect it to the Pi](https://www.amazon.com/gp/product/B07DVDZM41/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
+- [USB Speakers](https://www.adafruit.com/product/3369?gclid=Cj0KCQiA6t6ABhDMARIsAONIYyy2s0bJo0vEVb9XcrXjEUWlWhc_mSBNOj5DJfaf2vEM2jk1lyAlI-MaAhBtEALw_wcB) which required some busting out of their case and minor re-soldering
 - [And a little bit of mounting tape](https://www.amazon.com/gp/product/B00004Z498/)
 
 Put them all together, [set up the Pi's OS](https://www.youtube.com/watch?v=J024soVgEeM), start the Pi in [kiosk mode](https://wolfgang-ziegler.com/blog/setting-up-a-raspberrypi-in-kiosk-mode-2020), and _bam_. 
 
 <img width="300" alt="a mirror in a picture frame; behind the mirror shines through a clock with hands pointing not at times, but rather at locations. Home, Work, Gym, and more." src="https://user-images.githubusercontent.com/8933386/106194075-fbe2a500-6173-11eb-9baf-52d6bd9dab6a.jpeg"/>
-<img width="300" alt="The wiring behind the picture frame; a Raspberry Pi hooked up to a display driver, whose ribbon runs through the back of the frame to the front" src="https://user-images.githubusercontent.com/8933386/106194078-fe44ff00-6173-11eb-8af5-0cdea125a729.jpeg"/>
+<img width="300" alt="The wiring behind the picture frame; a Raspberry Pi hooked up to a display driver, whose ribbon runs through the back of the frame to the front" src="https://user-images.githubusercontent.com/8933386/106533148-396a6980-64b7-11eb-944c-915894717e07.jpeg"/>
 
 Magic Mirror JAMStack Weasley Clock.
 
